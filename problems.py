@@ -6,15 +6,41 @@ class Problem(metaclass=ABCMeta):
     def __init__(self, size: int, l: np.ndarray = None, r: np.ndarray = None):
         self.size = size
         if l is None:
-            l = np.full(size, -100)
+            l = np.full(size, -100.0)
         if r is None:
-            r = np.full(size, 100)
+            r = np.full(size, 100.0)
         self.l = l
         self.r = r
 
     @abstractmethod
     def f(self, p: np.ndarray) -> float:
         pass
+
+
+class BukinProblem(Problem):
+
+    def __init__(self):
+        size = 2
+        l = np.array([-15.0, -5.0])
+        r = np.array([-3.0, 3.0])
+        super().__init__(size, l, r)
+
+    def f(self, p):
+        x, y = p
+        return 100 * np.sqrt(np.abs(y - 0.01 * x ** 2)) + 0.01 * np.abs(x + 10)
+
+
+class McCormicProblem(Problem):
+
+    def __init__(self):
+        size = 2
+        l = np.array([-1.5, -3.0])
+        r = np.array([4.0, 4.0])
+        super().__init__(size, l, r)
+
+    def f(self, p):
+        x, y = p
+        return 1 + 2.5 * y - 1.5 * x + (x - y) ** 2 + np.sin(x + y)
 
 
 class EasomProblem(Problem):

@@ -19,7 +19,7 @@ class PowellMethod:
         self.iterations = iterations
         self.always_change_basis = always_change_basis
 
-    def minimum(self, problem: Problem, x0: np.ndarray) -> (np.ndarray, float):
+    def minimize(self, problem: Problem, x0: np.ndarray) -> (np.ndarray, float):
         f = problem.f
         ls = self.ls
         if x0 is None:
@@ -72,7 +72,9 @@ class PowellMethod:
 
 if __name__ == '__main__':
     np.random.seed(0)
-    x = np.array([9, 40])
+    x1 = np.array([-2, 1])
+    x2 = np.array([-13, 24])
+    x3 = np.array([1, 0])
 
     ea = EasomProblem()
     c = CrossProblem()
@@ -80,18 +82,22 @@ if __name__ == '__main__':
     ht = HolderTableProblem()
     eh = EggHolderProblem()
     r = RosenbrockProblem()
+    mc = McCormicProblem()
+    b = BukinProblem()
 
     pi = ParabolicInterpolation()
     rs = RandomSearch(60)
     res = RandomSearch(150)
 
-    powellp = PowellMethod(pi)
-    powell = PowellMethod(rs)
-    ps = PowellMethod(res, always_change_basis=True, eps=1e-2)
+    par_pow = PowellMethod(pi)
+    rand_pow = PowellMethod(rs)
+    rand_pow2 = PowellMethod(res, always_change_basis=True, eps=1e-2)
 
-    print(powellp.minimum(r, x))
-    print(powell.minimum(ht, x))
-    print(powell.minimum(eh, x))
-    print(powell.minimum(s, x))
-    print(powell.minimum(c, x))
-    print(ps.minimum(ea, x))
+    print(par_pow.minimize(r, x2))
+    print(rand_pow.minimize(ht, x2))
+    print(rand_pow.minimize(eh, x2))
+    print(rand_pow.minimize(s, x2))
+    print(rand_pow.minimize(c, x1))
+    print(rand_pow2.minimize(ea, x2))
+    print(rand_pow.minimize(mc, x3))
+    print(par_pow.minimize(b, x1))
