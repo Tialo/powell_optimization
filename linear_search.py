@@ -6,7 +6,7 @@ from problems import Problem
 
 class LineSearchMethod(metaclass=ABCMeta):
     @abstractmethod
-    def search(self, problem: Problem, x0: np.ndarray, d: np.ndarray) -> (float, float):
+    def search(self, problem: Problem, x0: np.ndarray, f0: float, d: np.ndarray) -> (float, float):
         pass
 
 
@@ -22,7 +22,7 @@ class RandomSearch(LineSearchMethod):
             attempts = 2
         self.attempts = attempts
 
-    def search(self, problem, x0, d):
+    def search(self, problem, x0, f0, d):
         non_zero_index = abs(d) > 1e-16
         ldv = (problem.l[non_zero_index] - x0[non_zero_index]) / d[non_zero_index]
         rdv = (problem.r[non_zero_index] - x0[non_zero_index]) / d[non_zero_index]
@@ -40,8 +40,12 @@ class RandomSearch(LineSearchMethod):
             return p_min, f(x0 + p_min * d)
 
         for i in range(self.attempts):
-            points = np.sort(np.random.uniform(l, r, self.point_number))
-            points = [(l, f(x0 + l * d))] + [(point, f(x0 + point * d)) for point in points] + [(r, f(x0 + r * d))]
+            points = [l, *np.random.uniform(l, r, self.point_number), r]
+            points = np.array([(point, f(x0 + point * d)) for point in points])
+            if not np.array([abs(points[:, 0]) < 1e-6]).any():
+                points = np.append(points, np.array([[0.0, f0]]), axis=0)
+            inds = np.argsort(points[:, 0])
+            points = points[inds]
             rv = np.array(points)
             points = rv[:, 0]
             values = rv[:, 1]
@@ -130,11 +134,10 @@ class ParabolicInterpolation(LineSearchMethod):
             fa, fb, fc = fb, fc, fu
         return sorted([(fa, ax), (fb, bx), (fc, cx)], key=lambda x: x[1])
 
-    def search(self, problem: Problem, x0: np.ndarray, d: np.ndarray) -> (float, float):
+    def search(self, problem, x0, f0, d):
         f = problem.f
         u = np.inf
         fu = np.inf
-        f0 = f(x0)
         (fa, a), (fb, b), (fc, c) = self.initialize_brackets(f, x0, d, f0)
         num = (b - a) ** 2 * (fb - fc) - (b - c) ** 2 * (fb - fa)
         den = 2 * ((b - a) * (fb - fc) - (b - c) * (fb - fa))

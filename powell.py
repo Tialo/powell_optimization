@@ -4,7 +4,10 @@ import numpy as np
 
 
 class PowellMethod:
-
+    """
+    Class of implementation of Powell's conjugate direction method, which realize
+    initialization of method's parameters and minimization of function
+    """
     def __init__(self, ls: LineSearchMethod, restarts: int = None,
                  eps: float = None, iterations: int = None, always_change_basis: bool = False):
         self.ls = ls
@@ -20,20 +23,28 @@ class PowellMethod:
         self.always_change_basis = always_change_basis
 
     def minimize(self, problem: Problem, x0: np.ndarray) -> (np.ndarray, float):
+        """
+        Powell's conjugate direction method
+        :param problem: Problem object represents function to minimize
+        :param x0: starting point of minimization
+        :return: point of minimum, minimal value
+        """
         f = problem.f
         ls = self.ls
         if x0 is None:
             x0 = np.zeros(problem.size)
         elif x0.dtype != np.float64:
             x0 = x0.astype(np.float64)
-        it = 0
+        restart = 0
         k = problem.size
         xi = np.copy(x0)
         fi = f(xi)
-        while it < self.restarts:
+        while restart < self.restarts:
             d = np.array([np.array([1.0 if i == j else 0.0 for i in range(k)]) for j in range(k)])
             xi = np.copy(x0)
             fi = f(xi)
+            # DELETE
+            # np.savez('start_point', xi, fi)
             iteration = 0
             while iteration < self.iterations:
                 x0i = np.copy(xi)
@@ -42,7 +53,7 @@ class PowellMethod:
                 ind = 0
                 for i, di in enumerate(d):
                     diff = fi
-                    alpha, fi = ls.search(problem, xi, di)
+                    alpha, fi = ls.search(problem, xi, fi, di)
                     diff -= fi
                     if diff > delta_k:
                         delta_k = diff
@@ -59,14 +70,14 @@ class PowellMethod:
                             fi = f3
                         iteration += 1
                         continue
-                alpha, fi = ls.search(problem, xi, dn)
+                alpha, fi = ls.search(problem, xi, fi, dn)
                 xi += alpha * dn
                 d = np.append(np.delete(d, ind, axis=0), np.array([dn]), axis=0)
                 if np.all(np.abs(d) < self.eps) or np.linalg.norm(xi - x0i) < 0.1 * self.eps:
                     break
                 iteration += 1
             x0 = np.copy(xi)
-            it += 1
+            restart += 1
         return fi, xi
 
 
