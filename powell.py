@@ -43,8 +43,6 @@ class PowellMethod:
             d = np.array([np.array([1.0 if i == j else 0.0 for i in range(k)]) for j in range(k)])
             xi = np.copy(x0)
             fi = f(xi)
-            # DELETE
-            # np.savez('start_point', xi, fi)
             iteration = 0
             while iteration < self.iterations:
                 x0i = np.copy(xi)
@@ -97,8 +95,8 @@ if __name__ == '__main__':
     b = BukinProblem()
 
     pi = ParabolicInterpolation()
-    rs = RandomSearch(60)
-    res = RandomSearch(150)
+    rs = SplineSearch(60)
+    res = SplineSearch(150)
 
     par_pow = PowellMethod(pi)
     rand_pow = PowellMethod(rs)

@@ -10,8 +10,17 @@ class LineSearchMethod(metaclass=ABCMeta):
         pass
 
 
-class RandomSearch(LineSearchMethod):
+class SplineSearch(LineSearchMethod):
+    """
+    Method of finding minimum of function by interpolating
+    it with cubic splines, which built at randomly chosen points.
+    """
     def __init__(self, point_number: int = None, splines: int = None, attempts: int = None):
+        """
+        :param point_number: number of randomly chosen points
+        :param splines: number of addition splines
+        :param attempts: number of independent tries of building a splines
+        """
         if point_number is None:
             point_number = 50
         self.point_number = point_number
@@ -23,6 +32,9 @@ class RandomSearch(LineSearchMethod):
         self.attempts = attempts
 
     def search(self, problem, x0, f0, d):
+        """
+        finding minimum of spline rebuilt {splines} times
+        """
         non_zero_index = abs(d) > 1e-16
         ldv = (problem.l[non_zero_index] - x0[non_zero_index]) / d[non_zero_index]
         rdv = (problem.r[non_zero_index] - x0[non_zero_index]) / d[non_zero_index]
@@ -75,6 +87,9 @@ class RandomSearch(LineSearchMethod):
 
 
 class ParabolicInterpolation(LineSearchMethod):
+    """
+    Method of finding minimum of function by interpolating it with quadratic parabolas.
+    """
     def __init__(self, grow_limit: float = None, eps: float = None, initial_step: float = None):
         if grow_limit is None:
             grow_limit = 100.0
