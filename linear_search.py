@@ -1,13 +1,7 @@
 from abc import ABCMeta, abstractmethod
 import numpy as np
 from scipy.interpolate import CubicSpline
-from problems import Problem
-
-
-class LineSearchMethod(metaclass=ABCMeta):
-    @abstractmethod
-    def search(self, problem: Problem, x0: np.ndarray, f0: float, d: np.ndarray) -> (float, float):
-        pass
+from base import LineSearchMethod
 
 
 class SplineSearch(LineSearchMethod):
