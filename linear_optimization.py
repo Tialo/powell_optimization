@@ -1,10 +1,9 @@
-from abc import ABCMeta, abstractmethod
 import numpy as np
 from scipy.interpolate import CubicSpline
-from base import LineSearchMethod
+from base import LinearOptimizationMethod
 
 
-class SplineSearch(LineSearchMethod):
+class SplineOptimization(LinearOptimizationMethod):
     """
     Method of finding minimum of function by interpolating
     it with cubic splines, which built at randomly chosen points.
@@ -25,7 +24,7 @@ class SplineSearch(LineSearchMethod):
             attempts = 2
         self.attempts = attempts
 
-    def search(self, problem, x0, f0, d):
+    def optimize(self, problem, x0, f0, d):
         """
         finding minimum of spline rebuilt {splines} times
         """
@@ -80,7 +79,7 @@ class SplineSearch(LineSearchMethod):
         return p_min, min_value
 
 
-class ParabolicInterpolation(LineSearchMethod):
+class ParabolicInterpolation(LinearOptimizationMethod):
     """
     Method of finding minimum of function by interpolating it with quadratic parabolas.
     """
@@ -143,7 +142,7 @@ class ParabolicInterpolation(LineSearchMethod):
             fa, fb, fc = fb, fc, fu
         return sorted([(fa, ax), (fb, bx), (fc, cx)], key=lambda x: x[1])
 
-    def search(self, problem, x0, f0, d):
+    def optimize(self, problem, x0, f0, d):
         f = problem.f
         u = np.inf
         fu = np.inf

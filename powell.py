@@ -1,5 +1,5 @@
 from problems import *
-from linear_search import *
+from linear_optimization import *
 import numpy as np
 
 
@@ -8,7 +8,7 @@ class PowellMethod:
     Class of implementation of Powell's conjugate direction method, which realize
     initialization of method's parameters and minimization of function
     """
-    def __init__(self, ls: LineSearchMethod, restarts: int = None,
+    def __init__(self, ls: LinearOptimizationMethod, restarts: int = None,
                  eps: float = None, iterations: int = None, always_change_basis: bool = False):
         self.ls = ls
         if restarts is None:
@@ -51,7 +51,7 @@ class PowellMethod:
                 ind = 0
                 for i, di in enumerate(d):
                     diff = fi
-                    alpha, fi = ls.search(problem, xi, fi, di)
+                    alpha, fi = ls.optimize(problem, xi, fi, di)
                     diff -= fi
                     if diff > delta_k:
                         delta_k = diff
@@ -68,7 +68,7 @@ class PowellMethod:
                             fi = f3
                         iteration += 1
                         continue
-                alpha, fi = ls.search(problem, xi, fi, dn)
+                alpha, fi = ls.optimize(problem, xi, fi, dn)
                 xi += alpha * dn
                 d = np.append(np.delete(d, ind, axis=0), np.array([dn]), axis=0)
                 if np.all(np.abs(d) < self.eps) or np.linalg.norm(xi - x0i) < 0.1 * self.eps:

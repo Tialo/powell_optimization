@@ -1,4 +1,4 @@
-from linear_search import *
+from linear_optimization import *
 from powell import PowellMethod
 from problems import *
 import numpy as np
@@ -19,8 +19,8 @@ if __name__ == '__main__':
     b = BukinProblem()
 
     pi = ParabolicInterpolation()
-    rs = SplineSearch(60)
-    res = SplineSearch(150)
+    rs = SplineOptimization(60)
+    res = SplineOptimization(150)
 
     par_pow = PowellMethod(pi)
     rand_pow = PowellMethod(rs)

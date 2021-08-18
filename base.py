@@ -17,9 +17,9 @@ class Problem(metaclass=ABCMeta):
         pass
 
 
-class LineSearchMethod(metaclass=ABCMeta):
+class LinearOptimizationMethod(metaclass=ABCMeta):
     @abstractmethod
-    def search(self, problem: Problem, x0: np.ndarray, f0: float, d: np.ndarray) -> (float, float):
+    def optimize(self, problem: Problem, x0: np.ndarray, f0: float, d: np.ndarray) -> (float, float):
         pass
 
 
