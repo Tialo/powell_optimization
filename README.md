@@ -11,6 +11,7 @@ class Func(Problem):
     super().__init__(size=2)
   
   def f(p):
+    x, y = p
     return 100 * (y - x ** 2) ** 2 + (1 - x) ** 2
 func = Func()
 pi = ParabolicInterpolation()
